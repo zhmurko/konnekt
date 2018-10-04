@@ -1,0 +1,25 @@
+dist: trusty
+language: ruby
+
+rvm:
+  - 2.5.1
+
+branches:
+  only:
+    - master
+    - /^(?i:travis).*$/
+    - /^(?i:feature).*$/
+    - /^(?i:fix).*$/
+    - /^(?i:release).*$/
+
+before_script:
+  - cp config/database.yml.travis config/database.yml
+  - psql -c 'create database travis_ci_test;' -U postgres
+
+script:
+  - bundle install
+  - bundle exec rake db:migrate RAILS_ENV=test
+  - bundle exec rake
+
+services:
+  - postgresql
